@@ -51,5 +51,5 @@ tests
     str(ObjectId()) duplicates: 0
 
 uqid.py version 0.2.0  
-Copyright (C) 2015-2015 by Denis Ryzhkov <denisr@denisr.com>  
+Copyright (C) 2015-2016 by Denis Ryzhkov <denisr@denisr.com>  
 MIT License, see http://opensource.org/licenses/MIT
