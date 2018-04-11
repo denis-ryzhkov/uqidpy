@@ -1,8 +1,8 @@
 """
-uqid.py version 0.2.0
+uqid.py version 0.3.0
 https://github.com/denis-ryzhkov/uqidpy
 
-Copyright (C) 2015-2016 by Denis Ryzhkov <denisr@denisr.com>
+Copyright (C) 2015-2018 by Denis Ryzhkov <denisr@denisr.com>
 MIT License, see http://opensource.org/licenses/MIT
 """
 
@@ -10,6 +10,11 @@ MIT License, see http://opensource.org/licenses/MIT
 
 from datetime import datetime
 from random import choice
+
+try:
+    xrange
+except NameError:
+    xrange = range
 
 ### chars
 
@@ -41,20 +46,30 @@ def datetime_from_dtid(s):
 
 def tests():
 
+    ### import
+
     from time import time
+    from uuid import uuid4
 
     try:
         from bson import ObjectId
     except ImportError:
         ObjectId = None
 
+    ### samples
+
+    print('\nSAMPLES:')
     length = 24
-    print('Length: {}'.format(length))
+
+    print('str(uuid4()): {}'.format(uuid4()))
+    print('len(^): {}'.format(len(str(uuid4()))))
+    print('len(v): {}'.format(length))
+
+    if ObjectId:
+        print('str(ObjectId()): {}'.format(str(ObjectId())))
 
     print('uqid({}): {}'.format(length, uqid(length)))
     print('dtid({}): {}'.format(length, dtid(length)))
-    if ObjectId:
-        print('str(ObjectId()): {}'.format(str(ObjectId())))
 
     assert len(uqid(length)) == length
     assert len(dtid(length)) == length
@@ -62,6 +77,21 @@ def tests():
 
     N = 1000*1000
     print('Iterations: {}'.format(N))
+
+    ### seconds
+
+    print('\nSECONDS:')
+
+    start = time()
+    for _ in xrange(N):
+        str(uuid4())
+    print('str(uuid4()) seconds: {:.6f}'.format(time() - start))
+
+    if ObjectId:
+        start = time()
+        for _ in xrange(N):
+            str(ObjectId())
+        print('str(ObjectId()) seconds: {:.6f}'.format(time() - start))
 
     start = time()
     for _ in xrange(N):
@@ -73,21 +103,22 @@ def tests():
         dtid(length)
     print('dtid({}) seconds: {:.6f}'.format(length, time() - start))
 
+    ### duplicates
+
+    print('\nDUPLICATES:')
+
+    U = len(set(str(uuid4()) for _ in xrange(N)))
+    print('str(uuid4()) duplicates: {}'.format(N - U))
+
     if ObjectId:
-        start = time()
-        for _ in xrange(N):
-            str(ObjectId())
-        print('str(ObjectId()) seconds: {:.6f}'.format(time() - start))
+        U = len(set(str(ObjectId()) for _ in xrange(N)))
+        print('str(ObjectId()) duplicates: {}'.format(N - U))
 
     U = len(set(uqid(length) for _ in xrange(N)))
     print('uqid({}) duplicates: {}'.format(length, N - U))
 
     U = len(set(dtid(length) for _ in xrange(N)))
     print('dtid({}) duplicates: {}'.format(length, N - U))
-
-    if ObjectId:
-        U = len(set(str(ObjectId()) for _ in xrange(N)))
-        print('str(ObjectId()) duplicates: {}'.format(N - U))
 
 if __name__ == '__main__':
     tests()

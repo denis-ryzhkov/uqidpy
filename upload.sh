@@ -1,2 +1,4 @@
 #!/bin/bash
-python setup.py sdist register upload
+python2 setup.py sdist bdist_wheel
+python3 setup.py sdist bdist_wheel
+twine upload dist/*
